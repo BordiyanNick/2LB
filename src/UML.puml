@@ -1,0 +1,63 @@
+@startuml
+title UML-діаграма розгортання для ПП MA-типу
+
+skinparam shadowing false
+skinparam dpi 150
+skinparam rectangle {
+  BorderColor black
+  BackgroundColor white
+}
+skinparam node {
+  BorderColor black
+  BackgroundColor white
+}
+skinparam artifact {
+  BorderColor black
+  BackgroundColor white
+}
+
+' ========================
+' Смартфон (Presentation Layer)
+' ========================
+node "<<Смартфон>>" as phone {
+  node "<<OC Android>>" as android {
+    artifact "*.apk\n(Android Studio)"
+  }
+}
+
+' Сенсорний екран і мікрофон кружечками
+() "Сенсорний екран" as sensor
+() "Мікрофон" as mic
+
+phone -down-> sensor
+phone -down-> mic
+
+' ========================
+' Сервер застосунку (Business Logic Layer)
+' ========================
+node "<<сервер 1>>" as server1 {
+  node "<<OC Linux>>" as linux1 {
+    node "<<Application Server\nApache Tomcat>>" as tomcat {
+      artifact "*.jar"
+    }
+  }
+}
+
+' ========================
+' Сервер бази даних (Access Layer)
+' ========================
+node "<<сервер 2>>" as server2 {
+  node "<<OC Linux>>" as linux2 {
+    node "<<Database Server\nPostgreSQL>>" as postgres {
+      database "Relation\nDataBase"
+    }
+  }
+}
+
+' ========================
+' Зв'язки
+' ========================
+phone --> server1
+server1 --> server2
+
+@enduml
