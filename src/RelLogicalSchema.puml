@@ -1,0 +1,98 @@
+@startuml
+
+title Relational Logical Schema - "Health&Music Hub"
+
+hide circle
+
+' === Таблиця користувачів ===
+entity "USER" as user {
+    (PK) user_id
+    --
+    name
+    age
+    gender
+    email
+    password
+}
+
+' === Фізична активність ===
+entity "ACTIVITY" as activity {
+    (PK) activity_id
+    --
+    (FK) user_id
+    steps
+    calories_burned
+    sleep_hours
+    date
+}
+
+' === Харчування ===
+entity "NUTRITION" as nutrition {
+    (PK) nutrition_id
+    --
+    (FK) user_id
+    meal_name
+    calories
+    proteins
+    fats
+    carbs
+    date
+}
+
+' === Аналіз стану здоров'я ===
+entity "HEALTH_ANALYSIS" as analysis {
+    (PK) analysis_id
+    --
+    (FK) user_id
+    report_date
+    health_score
+}
+
+' === Рекомендації ===
+entity "RECOMMENDATION" as rec {
+    (PK) recommendation_id
+    --
+    (FK) analysis_id
+    text
+    type
+    created_at
+}
+
+' === Музичні ідеї ===
+entity "MUSIC_IDEA" as idea {
+    (PK) idea_id
+    --
+    (FK) user_id
+    title
+    description
+    audio_path
+}
+
+' === Пости в спільноті ===
+entity "COMMUNITY_POST" as post {
+    (PK) post_id
+    --
+    (FK) user_id
+    content
+    created_at
+}
+
+' === Звіти ===
+entity "REPORT" as report {
+    (PK) report_id
+    --
+    (FK) user_id
+    summary_text
+    created_at
+}
+
+' === Зв’язки ===
+user ||--o{ activity
+user ||--o{ nutrition
+user ||--o{ analysis
+analysis ||--o{ rec
+user ||--o{ idea
+user ||--o{ post
+user ||--o{ report
+
+@enduml
