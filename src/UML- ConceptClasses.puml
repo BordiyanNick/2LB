@@ -1,0 +1,63 @@
+@startuml
+' UML Conceptual Class Diagram — Health&Music Hub
+
+class User {
+  +name : String
+  +age : Integer
+  +gender : String
+  +email : String
+}
+
+class Activity {
+  +steps : Integer
+  +calories_burned : Integer
+  +sleep_hours : Float
+  +date : Date
+}
+
+class Nutrition {
+  +meal_name : String
+  +calories : Integer
+  +proteins : Float
+  +fats : Float
+  +carbs : Float
+  +date : Date
+}
+
+class HealthAnalysis {
+  +report_date : Date
+  +health_score : Float
+}
+
+class Recommendation {
+  +text : String
+  +type : String
+  +created_at : DateTime
+}
+
+class Report {
+  +summary_text : String
+  +created_at : DateTime
+}
+
+class MusicIdea {
+  +title : String
+  +description : String
+  +audio_path : String
+}
+
+class CommunityPost {
+  +content : String
+  +created_at : DateTime
+}
+
+' --- relationships ---
+User "1" -- "0..*" Activity : records
+User "1" -- "0..*" Nutrition : logs
+User "1" -- "0..*" HealthAnalysis : has
+HealthAnalysis "1" -- "0..*" Recommendation : generates
+User "1" -- "0..*" MusicIdea : creates
+User "1" -- "0..*" CommunityPost : writes
+User "1" -- "0..*" Report : generates
+
+@enduml
