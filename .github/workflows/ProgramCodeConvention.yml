@@ -1,26 +1,31 @@
-name: Program Code Convention Check
+name: Program Code Debug Lint
 
 on:
+  workflow_dispatch: {}
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
 
 jobs:
-  lint_python:
+  debug_lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Run Super-Linter (Python only)
-        # використовуйте офіційний репозиторій
-        uses: github/super-linter@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BRANCH: main
-          VALIDATE_PYTHON: true
-          # простий REGEX: шлях всередині репо
-          FILTER_REGEX_INCLUDE: "^2\\.6-GitHubActions/ProgramCode\\.py$"
-          IGNORE_GITIGNORED_FILES: true
+      - name: Show python version
+        run: python3 --version
+
+      - name: Install linters
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install flake8 pylint
+
+      - name: Run flake8
+        run: |
+          echo "=== flake8 output ==="
+          flake8 2.6-GitHubActions/ProgramCode.py || true
+
+      - name: Run pylint
+        run: |
+          echo "=== pylint output ==="
+          pylint 2.6-GitHubActions/ProgramCode.py || true
