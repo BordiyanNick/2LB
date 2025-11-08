@@ -1,0 +1,30 @@
+name: Program Code Convention Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint_python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install flake8
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      - name: Run flake8 style check
+        run: |
+          echo "=== Running Python Code Style Check ==="
+          flake8 2.6-GitHubActions/ProgramCode.py --max-line-length=120
