@@ -1,5 +1,3 @@
-# .github/workflows/PrintSoftwareVersions.yml
-
 name: Print Software Versions (Lab 4, Task 2.2.1)
 
 on:
@@ -18,8 +16,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4 
         
-      # 1. Налаштування Java та Maven (Видалено cache: 'maven')
-      - name: Setup Java and Maven
+      # 1. Налаштування Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -52,8 +50,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4 
         
-      # *** ВИПРАВЛЕННЯ: Встановлення psql client за допомогою apt ***
-      # Хоча apt-get може давати помилки, ми спробуємо з меншим навантаженням
+      # Встановлення psql client
       - name: Install PostgreSQL Client (psql)
         run: |
           sudo apt update
@@ -64,9 +61,8 @@ jobs:
           echo "=== Версія Клієнта PostgreSQL (psql) ==="
           psql --version
           
-      # *** ВИПРАВЛЕННЯ: Перевірка версії сервера через Docker з коректною назвою служби ***
       - name: 2. Display PostgreSQL Server Version via Docker
         run: |
-          echo "=== Версія Сервера PostgreSQL (через Docker-контейнер) ==="
-          # Перевірка версії через запуск контейнера, що є найбільш надійним способом
-          docker run --rm -e POSTGRES_HOST_AUTH_METHOD=trust postgres:latest psql -c "SELECT version();"
+          echo "=== Версія Сервера PostgreSQL (з образу Docker) ==="
+          # Просто запускаємо бінарний файл сервера з прапором --version
+          docker run --rm postgres:latest postgres --version
