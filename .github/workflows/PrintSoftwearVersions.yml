@@ -14,14 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # *** КРОК ВИПРАВЛЕННЯ 1: Налаштування Java та Maven ***
-      # Це забезпечує наявність команд 'java' та 'mvn'
+      # 0. Обов'язковий крок для доступу до репозиторію
+      - name: Checkout code
+        uses: actions/checkout@v4 
+        
+      # 1. Налаштування Java та Maven (Видалено cache: 'maven')
       - name: Setup Java and Maven
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Типова версія для сучасного Spring Boot
-          cache: 'maven'
+          java-version: '17'
           
       - name: 1. Display Java Version (for Spring Boot/Tomcat)
         run: |
@@ -33,10 +35,9 @@ jobs:
           echo "=== Версія Операційної Системи (Linux) ==="
           cat /etc/os-release
           
-      - name: 3. Display Maven Version (типовий інструмент збірки Java)
+      - name: 3. Display Maven Version
         run: |
           echo "=== Версія Maven ==="
-          # 'mvn' тепер має працювати
           mvn --version
   
   # ----------------------------------------------------
@@ -47,22 +48,25 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # *** КРОК ВИПРАВЛЕННЯ 2: Встановлення psql client ***
-      # Потрібно встановити psql, щоб команда 'psql' була знайдена
+      # 0. Обов'язковий крок для доступу до репозиторію
+      - name: Checkout code
+        uses: actions/checkout@v4 
+        
+      # *** ВИПРАВЛЕННЯ: Встановлення psql client за допомогою apt ***
+      # Хоча apt-get може давати помилки, ми спробуємо з меншим навантаженням
       - name: Install PostgreSQL Client (psql)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
+          sudo apt update
+          sudo apt install -y postgresql-client
           
       - name: 1. Display PostgreSQL Client Version
         run: |
           echo "=== Версія Клієнта PostgreSQL (psql) ==="
-          # 'psql' тепер має працювати
           psql --version
           
-      # *** КРОК ВИПРАВЛЕННЯ 3: Використання Docker-контейнера для сервера ***
+      # *** ВИПРАВЛЕННЯ: Перевірка версії сервера через Docker з коректною назвою служби ***
       - name: 2. Display PostgreSQL Server Version via Docker
         run: |
           echo "=== Версія Сервера PostgreSQL (через Docker-контейнер) ==="
-          # Запуск тимчасового контейнера PostgreSQL і виконання запиту
+          # Перевірка версії через запуск контейнера, що є найбільш надійним способом
           docker run --rm -e POSTGRES_HOST_AUTH_METHOD=trust postgres:latest psql -c "SELECT version();"
