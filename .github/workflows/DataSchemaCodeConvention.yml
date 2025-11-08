@@ -1,0 +1,20 @@
+name: SQL Code Convention Check
+
+on:
+  push:
+    paths:
+      - '2.6-GitHubActions/DataSchema.sql'
+  workflow_dispatch:
+
+jobs:
+  lint-sql:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install sql-lint
+        run: npm install -g sql-lint
+
+      - name: Run sql-lint on schema
+        run: sql-lint 2.6-GitHubActions/DataSchema.sql
