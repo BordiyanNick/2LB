@@ -1,4 +1,4 @@
-"""ProgramCode.py — демонстрація коректного коду Python для лабораторної №4."""
+"""ProgramCode.py — демонстраційний модуль для лабораторної роботи №4."""
 
 def main():
     print("Health Monitoring System - Laboratory Work #4")
