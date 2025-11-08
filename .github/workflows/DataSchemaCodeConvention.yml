@@ -24,3 +24,4 @@ jobs:
         run: |
           echo "🔍 Перевірка SQL-схеми даних..."
           sqlfluff lint 2.6-GitHubActions/DataSchema.sql --dialect postgres || true
+
