@@ -1,0 +1,66 @@
+# .github/workflows/PrintSoftwareVersions.yml
+
+name: Print Software Versions (Lab 4, Task 2.2.1)
+
+# Запуск вручну, щоб не витрачати ресурси на кожен комміт
+on:
+  workflow_dispatch:
+
+# Дві роботи (jobs), що виконуються паралельно
+jobs:
+  # ----------------------------------------------------
+  # Перша робота: Рівень обробки даних (Business Logic Layer)
+  # Компоненти: Java (для Spring Boot/Tomcat)
+  # ----------------------------------------------------
+  bl_versions:
+    name: BL - Java/Spring/Tomcat Versions
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Display Java Version (for Spring Boot/Tomcat)
+        run: |
+          echo "=== Версія Java (використовується Spring Boot та Tomcat) ==="
+          java --version
+          
+      - name: 2. Display OS Version (Linux)
+        run: |
+          echo "=== Версія Операційної Системи (Linux) ==="
+          # Виведення інформації про дистрибутив
+          cat /etc/os-release
+          
+      - name: 3. Display Maven Version (типовий інструмент збірки Java)
+        run: |
+          echo "=== Версія Maven ==="
+          mvn --version
+  
+  # ----------------------------------------------------
+  # Друга робота: Рівень доступу до даних (Access Layer)
+  # Компоненти: PostgreSQL
+  # ----------------------------------------------------
+  al_versions:
+    name: AL - PostgreSQL Version
+    runs-on: ubuntu-latest
+    
+    # Використання служби PostgreSQL (Docker-контейнера)
+    services:
+      postgres:
+        image: postgres:latest
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        # Зверніть увагу: на цьому етапі версія image: postgres:latest вже відома
+    
+    steps:
+      - name: 1. Display PostgreSQL Client Version
+        run: |
+          echo "=== Версія Клієнта PostgreSQL (psql) ==="
+          psql --version
+          
+      - name: 2. Display PostgreSQL Server Version via Connection
+        run: |
+          echo "=== Версія Сервера PostgreSQL (через запит до service) ==="
+          # Підключення до тимчасового контейнера (image: postgres:latest)
+          # Оскільки ім'я хоста за замовчуванням service - це 'postgres'
+          psql -h localhost -U postgres -c "SELECT version();"
