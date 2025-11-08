@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # *** КРОК ВИПРАВЛЕННЯ 1: Налаштування Java (також встановлює Maven) ***
+      # *** КРОК ВИПРАВЛЕННЯ 1: Налаштування Java та Maven ***
+      # Це забезпечує наявність команд 'java' та 'mvn'
       - name: Setup Java and Maven
         uses: actions/setup-java@v4
         with:
@@ -35,7 +36,7 @@ jobs:
       - name: 3. Display Maven Version (типовий інструмент збірки Java)
         run: |
           echo "=== Версія Maven ==="
-          # mvn тепер має працювати після actions/setup-java
+          # 'mvn' тепер має працювати
           mvn --version
   
   # ----------------------------------------------------
@@ -45,8 +46,9 @@ jobs:
     name: AL - PostgreSQL Version
     runs-on: ubuntu-latest
     
-    # *** КРОК ВИПРАВЛЕННЯ 2: Встановлення psql client ***
     steps:
+      # *** КРОК ВИПРАВЛЕННЯ 2: Встановлення psql client ***
+      # Потрібно встановити psql, щоб команда 'psql' була знайдена
       - name: Install PostgreSQL Client (psql)
         run: |
           sudo apt-get update
@@ -55,6 +57,7 @@ jobs:
       - name: 1. Display PostgreSQL Client Version
         run: |
           echo "=== Версія Клієнта PostgreSQL (psql) ==="
+          # 'psql' тепер має працювати
           psql --version
           
       # *** КРОК ВИПРАВЛЕННЯ 3: Використання Docker-контейнера для сервера ***
@@ -63,6 +66,3 @@ jobs:
           echo "=== Версія Сервера PostgreSQL (через Docker-контейнер) ==="
           # Запуск тимчасового контейнера PostgreSQL і виконання запиту
           docker run --rm -e POSTGRES_HOST_AUTH_METHOD=trust postgres:latest psql -c "SELECT version();"
-          
-# Примітка: Я вилучив секцію 'services' з al_versions, оскільки вона може викликати складнощі з підключенням
-# (порти, назви хостів) і замінив її на пряме використання Docker CLI, що є надійнішим для простого виводу версії.
