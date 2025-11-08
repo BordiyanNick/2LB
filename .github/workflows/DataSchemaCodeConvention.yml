@@ -1,20 +1,27 @@
-name: SQL Code Convention Check
+name: SQL Linter
 
 on:
   push:
-    paths:
-      - '2.6-GitHubActions/DataSchema.sql'
-  workflow_dispatch:
+    # запуск на події типу push
+    branches: [main]  # або заміни на 'L11', якщо твоя гілка має таку назву
+  pull_request:
+    branches: [main]
 
 jobs:
-  lint-sql:
+  sql-lint:
+    # використання Docker-image із середовищем shell
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Code in Repository
+        # завантаження файлів із репозиторію
         uses: actions/checkout@v3
 
       - name: Install sql-lint
+        # встановлення утиліти sql-lint
         run: npm install -g sql-lint
 
-      - name: Run sql-lint on schema
-        run: sql-lint 2.6-GitHubActions/DataSchema.sql
+      - name: Run SQL Lint
+        # запуск утиліти sql-lint на твоєму файлі
+        run: |
+          sql-lint $GITHUB_WORKSPACE/2.6-GitHubActions/DataSchema.sql
