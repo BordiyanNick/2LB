@@ -1,27 +1,27 @@
-name: SQL Linter
+name: SQLFluff Linter
 
 on:
   push:
-    # запуск на події типу push
-    branches: [main]  # або заміни на 'L11', якщо твоя гілка має таку назву
+    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
-  sql-lint:
-    # використання Docker-image із середовищем shell
+  lint_sql_schema:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code in Repository
-        # завантаження файлів із репозиторію
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install sql-lint
-        # встановлення утиліти sql-lint
-        run: npm install -g sql-lint
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-      - name: Run SQL Lint
-        # запуск утиліти sql-lint на твоєму файлі
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+
+      - name: Lint SQL schema
         run: |
-          sql-lint $GITHUB_WORKSPACE/2.6-GitHubActions/DataSchema.sql
+          echo "🔍 Перевірка схеми даних..."
+          sqlfluff lint $GITHUB_WORKSPACE/2.6-GitHubActions/DataSchema.sql --dialect oracle
