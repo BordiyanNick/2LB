@@ -2,21 +2,26 @@
 
 name: Print Software Versions (Lab 4, Task 2.2.1)
 
-# Запуск вручну, щоб не витрачати ресурси на кожен комміт
 on:
   workflow_dispatch:
 
-# Дві роботи (jobs), що виконуються паралельно
 jobs:
   # ----------------------------------------------------
   # Перша робота: Рівень обробки даних (Business Logic Layer)
-  # Компоненти: Java (для Spring Boot/Tomcat)
   # ----------------------------------------------------
   bl_versions:
     name: BL - Java/Spring/Tomcat Versions
     runs-on: ubuntu-latest
     
     steps:
+      # *** КРОК ВИПРАВЛЕННЯ 1: Налаштування Java (також встановлює Maven) ***
+      - name: Setup Java and Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17' # Типова версія для сучасного Spring Boot
+          cache: 'maven'
+          
       - name: 1. Display Java Version (for Spring Boot/Tomcat)
         run: |
           echo "=== Версія Java (використовується Spring Boot та Tomcat) ==="
@@ -25,42 +30,39 @@ jobs:
       - name: 2. Display OS Version (Linux)
         run: |
           echo "=== Версія Операційної Системи (Linux) ==="
-          # Виведення інформації про дистрибутив
           cat /etc/os-release
           
       - name: 3. Display Maven Version (типовий інструмент збірки Java)
         run: |
           echo "=== Версія Maven ==="
+          # mvn тепер має працювати після actions/setup-java
           mvn --version
   
   # ----------------------------------------------------
   # Друга робота: Рівень доступу до даних (Access Layer)
-  # Компоненти: PostgreSQL
   # ----------------------------------------------------
   al_versions:
     name: AL - PostgreSQL Version
     runs-on: ubuntu-latest
     
-    # Використання служби PostgreSQL (Docker-контейнера)
-    services:
-      postgres:
-        image: postgres:latest
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        # Зверніть увагу: на цьому етапі версія image: postgres:latest вже відома
-    
+    # *** КРОК ВИПРАВЛЕННЯ 2: Встановлення psql client ***
     steps:
+      - name: Install PostgreSQL Client (psql)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          
       - name: 1. Display PostgreSQL Client Version
         run: |
           echo "=== Версія Клієнта PostgreSQL (psql) ==="
           psql --version
           
-      - name: 2. Display PostgreSQL Server Version via Connection
+      # *** КРОК ВИПРАВЛЕННЯ 3: Використання Docker-контейнера для сервера ***
+      - name: 2. Display PostgreSQL Server Version via Docker
         run: |
-          echo "=== Версія Сервера PostgreSQL (через запит до service) ==="
-          # Підключення до тимчасового контейнера (image: postgres:latest)
-          # Оскільки ім'я хоста за замовчуванням service - це 'postgres'
-          psql -h localhost -U postgres -c "SELECT version();"
+          echo "=== Версія Сервера PostgreSQL (через Docker-контейнер) ==="
+          # Запуск тимчасового контейнера PostgreSQL і виконання запиту
+          docker run --rm -e POSTGRES_HOST_AUTH_METHOD=trust postgres:latest psql -c "SELECT version();"
+          
+# Примітка: Я вилучив секцію 'services' з al_versions, оскільки вона може викликати складнощі з підключенням
+# (порти, назви хостів) і замінив її на пряме використання Docker CLI, що є надійнішим для простого виводу версії.
