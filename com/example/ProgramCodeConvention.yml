@@ -1,4 +1,4 @@
-name: Java Code Linter
+name: Program Code Convention Check
 
 on:
   push:
@@ -10,9 +10,9 @@ jobs:
   ProgramCodeLinter:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code in Repository
+      - name: Checkout Code from Repository
         uses: actions/checkout@v3
-      - name: Lint Program Code
+      - name: Run Java Code Convention Linter
         uses: github/super-linter@v4
         env:
           VALIDATE_JAVA: true
