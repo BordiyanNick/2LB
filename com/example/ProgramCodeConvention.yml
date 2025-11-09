@@ -1,31 +1,20 @@
-name: Java Code Convention Check
+name: Java Code Linter
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  lint_java:
+  ProgramCodeLinter:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Install Checkstyle
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y checkstyle
-
-      - name: Run Checkstyle
-        run: |
-          echo "=== Running Java Code Style Check ==="
-          checkstyle -c /usr/share/checkstyle/sun_checks.xml 2.6-GitHubActions/src/com/example/ProgramCode.java
+      - name: Checkout Code in Repository
+        uses: actions/checkout@v3
+      - name: Lint Program Code
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_JAVA: true
+          FILTER_REGEX_INCLUDE: .*/ProgramCode\.java
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
