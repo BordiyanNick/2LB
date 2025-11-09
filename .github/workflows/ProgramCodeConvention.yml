@@ -1,39 +1,20 @@
-# .github/workflows/ProgramCodeConvention.yml
+name: Program Code Convention Check
 
-name: CI - Program Code Convention (Checkstyle)
-
-# Запуск вручну
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  java_lint:
-    name: Java Code Linter
+  ProgramCodeLinter:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # 1. Налаштування Java (для компіляції та Checkstyle)
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      # 2. Компіляція файлу (перевірка синтаксису)
-      - name: Compile Java Code
-        run: |
-          # Перевіряємо, чи компілюється коректний файл
-          javac ProgramCode.java
-      
-      # 3. Встановлення Checkstyle (використовуємо Checkstyle Action)
-      - name: Run Checkstyle
-        uses: reviewdog/action-checkstyle@v1
-        with:
-          # Вказуємо файл для перевірки
-          path: 'ProgramCode.java'
-          # Використовуємо стандартні правила Google, які суворіші за Sun
-          checkstyle_config: 'google_checks.xml' 
-          fail_on_error: true
+      - name: Checkout Code from Repository
+        uses: actions/checkout@v3
+      - name: Run Java Code Convention Linter
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_JAVA: true
+          FILTER_REGEX_INCLUDE: .*/ProgramCode\.java
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
