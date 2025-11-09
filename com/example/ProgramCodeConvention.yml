@@ -1,4 +1,4 @@
-name: Program Code Convention Check
+name: Java Code Linter
 
 on:
   push:
@@ -10,12 +10,11 @@ jobs:
   ProgramCodeLinter:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code from Repository
+      - name: Checkout Code in Repository
         uses: actions/checkout@v3
-
-      - name: Run Java Code Convention Linter
+      - name: Lint Program Code
         uses: github/super-linter@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVA: true
           FILTER_REGEX_INCLUDE: .*/ProgramCode\.java
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
